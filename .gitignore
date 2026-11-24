@@ -61,6 +61,14 @@ wheels/
 # /uploads/
 # /downloads/
 
+# Datos de estudiantes UdeA (Urabá 2026-1): datos personales, solo locales.
+# Se purgaron del historial; no vuelvas a agregarlos.
+data/URABA 20261.xlsx
+data/raw/URABA 20261.xlsx
+data/processed/uraba_clean.parquet
+data/processed/matriz_estudiantes.parquet
+outputs/scoring_estudiantes.csv
+
 # ==========================================
 # Editores e IDEs
 # ==========================================

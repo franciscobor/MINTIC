@@ -22,11 +22,19 @@ Dos módulos de analítica sobre cinco conjuntos de datos integrados:
 
 | # | Conjunto | Fuente | Obtención |
 |---|---|---|---|
-| 1 | Matriculados UdeA sedes regionales 2026-1 | Universidad de Antioquia | local (`data/raw/URABA 20261.xlsx`) |
+| 1 | Matriculados UdeA sedes regionales 2026-1 | Universidad de Antioquia | local (`data/raw/URABA 20261.xlsx`), **no incluido en el repositorio** (ver nota) |
 | 2 | [Beneficiarios de programas de acompañamiento](https://www.datos.gov.co/d/xk8x-i6kn) | datos.gov.co — Gobernación de Antioquia | local (`data/raw/Beneficiarios.xlsx`) |
 | 3 | [Población Antioquia censada 2018](https://www.datos.gov.co/d/evm3-92yw) | datos.gov.co — Gobernación de Antioquia / DANE | local (`data/raw/Población antioquia.xlsx`) |
 | 4 | [Resultados únicos Saber 11](https://www.datos.gov.co/d/kgxf-xxbe) | datos.gov.co — ICFES | API Socrata (`src/acquire.py`), filtro Antioquia 2018+ |
 | 5 | [DIVIPOLA códigos de municipios](https://www.datos.gov.co/d/gdxc-w37w) | datos.gov.co — DANE | API Socrata (`src/acquire.py`) |
+
+> **Nota sobre los datos de estudiantes.** El conjunto 1 contiene datos personales de
+> estudiantes de la UdeA (fecha de nacimiento, municipio, colegio, promedio, estrato), por lo
+> que no se publica. Lo mismo vale para lo que se deriva de él fila a fila
+> (`data/processed/uraba_clean.parquet`, `data/processed/matriz_estudiantes.parquet` y
+> `outputs/scoring_estudiantes.csv`): están en `.gitignore`. Para reproducir el pipeline hay
+> que obtener el archivo de la UdeA y ubicarlo en `data/raw/URABA 20261.xlsx`. La app no los
+> necesita: solo lee las salidas agregadas por municipio y `outputs/modelo_riesgo.pkl`.
 
 Llave de integración: **código DANE de municipio (5 dígitos)**, homologado contra
 DIVIPOLA con auditoría difusa de nombres (rapidfuzz). Cruce logrado: **100%** en
@@ -114,7 +122,9 @@ python --version    # debe mostrar Python 3.12.13
 ```
 ## Reproducción de Pipeline de Entrenamiento
 Los notebooks `notebooks/01…03` cuentan la historia completa (limpieza, módulo A,
-módulo B) ejecutando estas mismas funciones.
+módulo B) ejecutando estas mismas funciones. `clean.py` necesita `data/raw/URABA 20261.xlsx`,
+que no está en el repositorio (ver la nota de datos de estudiantes). Antes de subir un
+notebook, borra las salidas que muestren filas de estudiantes (`df.head()` y similares).
 
 ```bash
 .venv\Scripts\python src/acquire.py     # descarga datasets 4 y 5 (API datos.gov.co)
@@ -220,8 +230,8 @@ la de entrenamiento puede fallar o comportarse de forma inesperada.
 ├─ data/processed/   parquet limpios y matrices analíticas
 ├─ src/              pipeline reproducible (acquire, clean, integrate, module_a, module_b)
 ├─ notebooks/        01 limpieza · 02 módulo A · 03 módulo B
-├─ outputs/          mapa_brechas.html, ranking_brechas.csv, scoring_estudiantes.csv,
-│                    modelo_riesgo.pkl, figuras y métricas
+├─ outputs/          mapa_brechas.html, ranking_brechas.csv, modelo_riesgo.pkl,
+│                    figuras y métricas (scoring_estudiantes.csv: solo local)
 ├─ app/              main.py, modulo_a.py, modulo_b.py (app Streamlit)
 ├─ Dockerfile
 ├─ requirements.txt       dependencias de producción (app)
